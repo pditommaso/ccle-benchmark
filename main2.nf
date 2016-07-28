@@ -20,6 +20,8 @@ Channel
 
 
 process bam_sort {
+  tag "sample: $sample_id"
+  
   input: 
     set val(sample_id), file('sample.bam') from samples
   output: 
