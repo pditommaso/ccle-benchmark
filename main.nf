@@ -2,6 +2,10 @@
  * See 
  *   https://osf.io/vb2t6/
  *   http://biorxiv.org/content/early/2016/07/12/063552
+ * 
+ * GenCode24 Transcript
+ *   ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_24/gencode.v24.transcripts.fa.gz
+ *
  */
  
  
