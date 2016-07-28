@@ -44,8 +44,17 @@ process to_fastq {
   """
 }
 
+/*
+ *  apply the following transformation 
+ *   ( sampleId, [ pair_x_1.fastq, pair_x_2.fastq, pair_y_1.fastq, pair_y_2.fastq, ...  ] )
+ *     ==> 
+ *   ( sampleId, pair_x, [ pair_x_1.fastq, pair_x_2.fastq ] )
+ *   ( sampleId, pair_y, [ pair_y_1.fastq, pair_y_2.fastq ] )
+ *   ... 
+ */
+
 untrimmed
-  .map { sample, files -> tuple( sample, files[0].name.replaceAll(/_1.fastq/,'') , files) }
+  .flatMap { sample, files -> def list=[]; group(files).each { key,value -> list<<tuple(sample, key, value) }; return list }
   .set { untrimmed_pairs } 
 
 process trim_galore {
@@ -78,3 +87,28 @@ process kallisto {
   """
 
 }
+
+
+// ============= helper functions =============== 
+
+
+
+/* 
+ * Given a list of FASTQ read pairs (ending either with _1.fastq or _2.fastq) 
+ * returns a map for groupping the file pairs having the same prefix 
+ * 
+ */
+
+def group(List files) {
+  def result = [:]
+  
+  files.each { f -> 
+    def id = f.name.replaceAll(/_[12].fastq/,'')
+    def pair = result.getOrCreate(id) { new ArrayList(2) }
+    pair << f 
+  }
+  
+  return result
+} 
+
+
