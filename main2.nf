@@ -7,17 +7,14 @@
  *   ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_24/gencode.v24.transcripts.fa.gz
  *
  */
- 
- 
+
 params.index = "$baseDir/test/transcripts.idx"
 params.samples = "$baseDir/test/*.bam"
-
 
 Channel
 	.fromPath(params.samples)
 	.map { file -> tuple(file.baseName, file) }
 	.set { samples }
-
 
 process bam_sort {
   tag "sample: $sample_id"
@@ -71,7 +68,6 @@ process trim_galore {
   mkdir fastq_trimmed
   trim_galore --paired $fastq --length 35 -o fastq_trimmed/
   """
-
 }
 
 process kallisto {
@@ -87,18 +83,13 @@ process kallisto {
   """
   kallisto quant -i ${params.index} -b 30 -t ${task.cpus} --bias -o output/ $reads
   """
-
 }
-
-
-// ============= helper functions =============== 
 
 
 
 /* 
  * Given a list of FASTQ read pairs (ending either with _1.fastq or _2.fastq) 
  * returns a map for groupping the file pairs having the same prefix 
- * 
  */
 
 def group(List files) {
@@ -112,5 +103,4 @@ def group(List files) {
   
   return result
 } 
-
 
